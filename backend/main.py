@@ -141,6 +141,44 @@ def list_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).order_by(Task.created_at.desc()).all()
     return tasks
 
+@app.get("/api/tasks/{task_id}/runs", response_model=List[RunResponse])
+def get_task_runs(task_id: int, db: Session = Depends(get_db)):
+    """Get all runs for a specific task"""
+    task = db.query(Task).filter(Task.id == task_id).first()
+    if not task:
+        raise HTTPException(status_code=404, detail="Task not found")
+
+    runs = db.query(Run).filter(Run.task_id == task_id).order_by(Run.created_at.desc()).all()
+
+    # Build response with attempt data
+    runs_data = []
+    for run in runs:
+        attempts_data = []
+        for attempt in run.attempts:
+            tests_total = len(attempt.test_results)
+            tests_passed = sum(1 for t in attempt.test_results if t.status == "passed")
+
+            attempts_data.append(AttemptResponse(
+                id=attempt.id,
+                attempt_number=attempt.attempt_number,
+                status=attempt.status,
+                reward=attempt.reward,
+                episode_count=attempt.episode_count,
+                tests_passed=tests_passed if tests_total > 0 else None,
+                tests_total=tests_total if tests_total > 0 else None
+            ))
+
+        runs_data.append(RunResponse(
+            id=run.id,
+            task_id=run.task_id,
+            model=run.model,
+            status=run.status,
+            created_at=run.created_at,
+            attempts=attempts_data
+        ))
+
+    return runs_data
+
 @app.post("/api/tasks/{task_id}/runs", response_model=RunResponse)
 async def create_run(
     task_id: int,

@@ -29,6 +29,16 @@ export async function getTasks(): Promise<Task[]> {
   return response.json();
 }
 
+export async function getTaskRuns(taskId: number): Promise<Run[]> {
+  const response = await fetch(`${API_BASE}/api/tasks/${taskId}/runs`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch task runs');
+  }
+
+  return response.json();
+}
+
 export async function createRun(taskId: number, data: RunCreate): Promise<Run> {
   const response = await fetch(`${API_BASE}/api/tasks/${taskId}/runs`, {
     method: 'POST',
