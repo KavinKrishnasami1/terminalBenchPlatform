@@ -22,9 +22,16 @@ from harbor_runner import execute_harbor
 app = FastAPI(title="Terminal-Bench Platform")
 
 # CORS middleware
+# Allow both local development and Railway frontend
+frontend_url = os.getenv("FRONTEND_URL", "https://frontend-production-a622.up.railway.app")
+allowed_origins = [
+    "http://localhost:3000",  # Local development
+    frontend_url,  # Railway frontend from env var
+]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # Next.js dev server
+    allow_origins=allowed_origins,
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
@@ -80,6 +87,10 @@ class RunResponse(BaseModel):
 @app.get("/")
 def read_root():
     return {"message": "Terminal-Bench Platform API"}
+
+@app.get("/health")
+def health_check():
+    return {"status": "healthy", "service": "terminal-bench-platform"}
 
 @app.post("/api/tasks", response_model=TaskResponse)
 async def upload_task(
@@ -322,12 +333,14 @@ def execute_run(run_id: int, task_path: str, model: str, n_attempts: int):
             output_dir.mkdir(parents=True, exist_ok=True)
 
             # Execute Harbor
+            print(f"🚀 Starting Harbor for attempt {attempt.id}", flush=True)
             result = execute_harbor(
                 task_path=task_path,
                 model=model,
                 output_dir=str(output_dir),
                 openrouter_api_key=openrouter_key
             )
+            print(f"✅ Harbor finished for attempt {attempt.id}: success={result['success']}", flush=True)
 
             if result['success']:
                 # Update attempt
@@ -358,6 +371,7 @@ def execute_run(run_id: int, task_path: str, model: str, n_attempts: int):
                 attempt.status = "failed"
                 attempt.error_message = result['error']
                 attempt.completed_at = datetime.utcnow()
+                print(f"❌ Attempt {attempt.id} failed: {result['error']}", flush=True)
 
             db.commit()
 

@@ -1,0 +1,16 @@
+[phases.setup]
+nixPkgs = ["python312", "git"]
+
+[phases.install]
+cmds = [
+  "python -m venv /opt/venv",
+  "python -m venv /opt/harbor-venv",
+  "/opt/venv/bin/pip install -r requirements.txt",
+  "/opt/harbor-venv/bin/pip install git+https://github.com/laude-institute/harbor.git"
+]
+
+[start]
+cmd = "source /opt/venv/bin/activate && uvicorn main:app --host 0.0.0.0 --port $PORT"
+
+[variables]
+HARBOR_BIN = "/opt/harbor-venv/bin/harbor"

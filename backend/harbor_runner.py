@@ -20,14 +20,21 @@ def execute_harbor(
         Dict with keys: success, output_path, reward, episodes, test_results, error
     """
     try:
-        # Get harbor executable from harbor-venv (separate venv to avoid multipart conflicts)
-        project_root = Path(__file__).parent.parent
-        harbor_bin = project_root / 'harbor-venv' / 'bin' / 'harbor'
+        # Get harbor executable from environment variable (production) or local path (dev)
+        harbor_bin_env = os.getenv('HARBOR_BIN')
+
+        if harbor_bin_env:
+            # Production: use HARBOR_BIN env var set in Dockerfile
+            harbor_bin = Path(harbor_bin_env)
+        else:
+            # Development: use local harbor-venv
+            project_root = Path(__file__).parent.parent
+            harbor_bin = project_root / 'harbor-venv' / 'bin' / 'harbor'
 
         if not harbor_bin.exists():
             return {
                 'success': False,
-                'error': f"Harbor executable not found at {harbor_bin}",
+                'error': f"Harbor executable not found at {harbor_bin}. Set HARBOR_BIN env var or install Harbor in harbor-venv/",
                 'output_path': None,
                 'reward': 0.0,
                 'episodes': [],
@@ -35,6 +42,7 @@ def execute_harbor(
             }
 
         # Build Harbor command
+        # Use Docker environment (requires Docker daemon - works on Fly.io)
         cmd = [
             str(harbor_bin), 'run',
             '--path', task_path,
@@ -42,7 +50,8 @@ def execute_harbor(
             '--model', model,
             '--jobs-dir', output_dir,
             '--n-attempts', '1',
-            '--n-concurrent', '1'
+            '--n-concurrent', '1',
+            '--env', 'docker'  # Use Docker environment
         ]
 
         # Set environment

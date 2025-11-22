@@ -1,0 +1,44 @@
+# fly.toml app configuration file generated for tbench-platform-backend on 2025-11-22T13:20:13-08:00
+#
+# See https://fly.io/docs/reference/configuration/ for information about how to use this file.
+#
+
+app = 'tbench-platform-backend'
+primary_region = 'sjc'
+
+[experimental]
+  auto_rollback = true
+
+[build]
+  dockerfile = 'Dockerfile'
+
+[env]
+  HARBOR_BIN = '/app/harbor-venv/bin/harbor'
+  PORT = '8080'
+
+[[mounts]]
+  source = 'tbench_data'
+  destination = '/data'
+  initial_size = '10gb'
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = 'off'
+  auto_start_machines = true
+  min_machines_running = 1
+
+  [[http_service.checks]]
+    interval = '10s'
+    timeout = '2s'
+    grace_period = '5s'
+    method = 'GET'
+    path = '/health'
+
+[[vm]]
+  size = 'shared-cpu-2x'
+  memory = '4gb'
+
+[init]
+  # Enable init system for proper process management (required for Docker daemon)
+  tini = true

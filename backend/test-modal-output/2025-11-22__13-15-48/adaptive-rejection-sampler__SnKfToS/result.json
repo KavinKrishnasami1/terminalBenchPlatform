@@ -1,0 +1,72 @@
+{
+    "id": "150a8d21-5026-4ad7-9e6d-c2fabdd5e5a3",
+    "task_name": "adaptive-rejection-sampler",
+    "trial_name": "adaptive-rejection-sampler__SnKfToS",
+    "trial_uri": "file:///Users/kavin.krishnasami/Projects/terminalBenchPlatform/backend/test-modal-output/2025-11-22__13-15-48/adaptive-rejection-sampler__SnKfToS",
+    "task_id": {
+        "path": "uploads/adaptive-rejection-sampler_20251121_162410/extracted/adaptive-rejection-sampler"
+    },
+    "source": null,
+    "task_checksum": "4fde6e809c475b000ae3ea4135f906ffe4775bccae7dafd0b123f4ecc9fcf697",
+    "config": {
+        "task": {
+            "path": "uploads/adaptive-rejection-sampler_20251121_162410/extracted/adaptive-rejection-sampler",
+            "git_url": null,
+            "git_commit_id": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "adaptive-rejection-sampler__SnKfToS",
+        "trials_dir": "test-modal-output/2025-11-22__13-15-48",
+        "timeout_multiplier": 1.0,
+        "agent": {
+            "name": "terminus-2",
+            "import_path": null,
+            "model_name": "openrouter/anthropic/claude-sonnet-4.5",
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {}
+        },
+        "environment": {
+            "type": "modal",
+            "force_build": false,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "job_id": "34d2ef52-0adf-4e27-8de9-107d4802c19a"
+    },
+    "agent_info": {
+        "name": "terminus-2",
+        "version": "2.0.0",
+        "model_info": {
+            "name": "anthropic/claude-sonnet-4.5",
+            "provider": "openrouter"
+        }
+    },
+    "agent_result": null,
+    "verifier_result": null,
+    "exception_info": {
+        "exception_type": "RemoteError",
+        "exception_message": "Image build for im-Cin159jWxntqffHRnNqAue failed. See build logs for more details. (Hint: Use `modal.enable_output()` to see logs from the process building the Image.)",
+        "exception_traceback": "Traceback (most recent call last):\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/harbor/trial/trial.py\", line 340, in run\n    await self._setup_environment()\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/harbor/trial/trial.py\", line 180, in _setup_environment\n    await self._start_environment_with_retry()\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 189, in async_wrapped\n    return await copy(fn, *args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 111, in __call__\n    do = await self.iter(retry_state=retry_state)\n         ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 153, in iter\n    result = await action(retry_state)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/_utils.py\", line 99, in inner\n    return call(*args, **kwargs)\n           ^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/__init__.py\", line 400, in <lambda>\n    self._add_action_func(lambda rs: rs.outcome.result())\n                                     ^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py\", line 449, in result\n    return self.__get_result()\n           ^^^^^^^^^^^^^^^^^^^\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/concurrent/futures/_base.py\", line 401, in __get_result\n    raise self._exception\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/tenacity/asyncio/__init__.py\", line 114, in __call__\n    result = await fn(*args, **kwargs)\n             ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/harbor/trial/trial.py\", line 192, in _start_environment_with_retry\n    await asyncio.wait_for(\n  File \"/opt/homebrew/Cellar/python@3.12/3.12.9/Frameworks/Python.framework/Versions/3.12/lib/python3.12/asyncio/tasks.py\", line 520, in wait_for\n    return await fut\n           ^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/harbor/environments/modal.py\", line 77, in start\n    self._sandbox = await Sandbox.create.aio(\n                    ^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/modal/sandbox.py\", line 356, in create\n    return await _Sandbox._create(\n           ^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/modal/sandbox.py\", line 500, in _create\n    await resolver.load(obj, load_context)\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/modal/_utils/async_utils.py\", line 276, in gather\n    results = await asyncio.gather(*(tc.create_task(coro) for coro in coros))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/modal/_utils/async_utils.py\", line 276, in gather\n    results = await asyncio.gather(*(tc.create_task(coro) for coro in coros))\n              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^\n  File \"/Users/kavin.krishnasami/Projects/terminalBenchPlatform/harbor-venv/lib/python3.12/site-packages/modal/image.py\", line 670, in _load\n    raise RemoteError(msg)\nmodal.exception.RemoteError: Image build for im-Cin159jWxntqffHRnNqAue failed. See build logs for more details. (Hint: Use `modal.enable_output()` to see logs from the process building the Image.)\n",
+        "occurred_at": "2025-11-22T13:15:54.739166"
+    },
+    "started_at": "2025-11-22T13:15:48.317108",
+    "finished_at": "2025-11-22T13:15:54.739814",
+    "environment_setup": {
+        "started_at": "2025-11-22T13:15:48.318387",
+        "finished_at": "2025-11-22T13:15:54.733472"
+    },
+    "agent_setup": null,
+    "agent_execution": null,
+    "verifier": null
+}

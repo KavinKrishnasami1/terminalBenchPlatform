@@ -1,0 +1,35 @@
+FROM python:3.12-slim
+
+WORKDIR /app
+
+# Install only git (remove docker.io for now)
+RUN apt-get update && apt-get install -y \
+    git \
+    && rm -rf /var/lib/apt/lists/*
+
+# Create both virtual environments
+RUN python -m venv /app/venv
+RUN python -m venv /app/harbor-venv
+
+# Copy requirements first for better caching
+COPY requirements.txt .
+
+# Install FastAPI backend dependencies
+RUN /app/venv/bin/pip install --no-cache-dir -r requirements.txt
+
+# Install Harbor in separate venv
+RUN /app/harbor-venv/bin/pip install --no-cache-dir \
+    git+https://github.com/laude-institute/harbor.git
+
+# Copy application code
+COPY . .
+
+# Set environment variables
+ENV PATH="/app/venv/bin:$PATH"
+ENV HARBOR_BIN="/app/harbor-venv/bin/harbor"
+
+# Expose port
+EXPOSE 8001
+
+# Start FastAPI server
+CMD ["/bin/bash", "-c", "/app/venv/bin/uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001}"]

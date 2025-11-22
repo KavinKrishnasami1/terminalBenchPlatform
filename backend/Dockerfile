@@ -6,7 +6,13 @@ WORKDIR /app
 RUN apt-get update && apt-get install -y \
     git \
     docker.io \
+    curl \
     && rm -rf /var/lib/apt/lists/*
+
+# Install Docker Compose plugin manually
+RUN mkdir -p /usr/local/lib/docker/cli-plugins && \
+    curl -SL https://github.com/docker/compose/releases/download/v2.31.0/docker-compose-linux-x86_64 -o /usr/local/lib/docker/cli-plugins/docker-compose && \
+    chmod +x /usr/local/lib/docker/cli-plugins/docker-compose
 
 # Create both virtual environments
 RUN python -m venv /app/venv
@@ -28,9 +34,12 @@ ENV PATH="/app/venv/bin:$PATH"
 # Set Harbor binary path for subprocess calls
 ENV HARBOR_BIN="/app/harbor-venv/bin/harbor"
 
+# Copy and make startup script executable
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
+
 # Expose port (Railway will use $PORT env var)
 EXPOSE 8001
 
-# Start FastAPI server using main venv
-# Use $PORT from Railway, fallback to 8001 for local development
-CMD ["/bin/bash", "-c", "/app/venv/bin/uvicorn main:app --host 0.0.0.0 --port ${PORT:-8001}"]
+# Start Docker daemon and FastAPI server
+CMD ["/app/start.sh"]

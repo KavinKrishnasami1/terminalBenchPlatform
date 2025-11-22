@@ -1,0 +1,17 @@
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+*.db
+*.db-journal
+venv/
+harbor-venv/
+uploads/
+harbor_outputs/
+.env
+.env.local
+*.log
+.git
+.gitignore
+README.md
