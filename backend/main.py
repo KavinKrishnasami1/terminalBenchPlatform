@@ -66,6 +66,7 @@ class EpisodeResponse(BaseModel):
     episode_number: int
     analysis: Optional[str]
     plan: Optional[str]
+    commands: Optional[str]
     task_complete: Optional[bool]
 
 class RunResponse(BaseModel):
@@ -228,6 +229,26 @@ def get_episodes(attempt_id: int, db: Session = Depends(get_db)):
         raise HTTPException(status_code=404, detail="Attempt not found")
 
     return attempt.episodes
+
+class TestResultResponse(BaseModel):
+    id: int
+    test_name: str
+    status: str
+    duration_ms: Optional[float]
+    error_message: Optional[str]
+
+    class Config:
+        from_attributes = True
+
+@app.get("/api/attempts/{attempt_id}/test-results", response_model=List[TestResultResponse])
+def get_test_results(attempt_id: int, db: Session = Depends(get_db)):
+    """Get test results for an attempt"""
+
+    attempt = db.query(Attempt).filter(Attempt.id == attempt_id).first()
+    if not attempt:
+        raise HTTPException(status_code=404, detail="Attempt not found")
+
+    return attempt.test_results
 
 def execute_run(run_id: int, task_path: str, model: str, n_attempts: int):
     """Execute all attempts for a run (runs in background)"""

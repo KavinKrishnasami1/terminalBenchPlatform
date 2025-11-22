@@ -28,6 +28,7 @@ export interface Episode {
   episode_number: number;
   analysis: string | null;
   plan: string | null;
+  commands: string | null;
   task_complete: boolean | null;
 }
 

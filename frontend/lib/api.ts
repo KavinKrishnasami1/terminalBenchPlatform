@@ -1,4 +1,4 @@
-import type { Task, Run, RunCreate, Episode } from './types';
+import type { Task, Run, RunCreate, Episode, TestResult } from './types';
 
 const API_BASE = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8001';
 
@@ -61,6 +61,16 @@ export async function getEpisodes(attemptId: number): Promise<Episode[]> {
 
   if (!response.ok) {
     throw new Error('Failed to fetch episodes');
+  }
+
+  return response.json();
+}
+
+export async function getTestResults(attemptId: number): Promise<TestResult[]> {
+  const response = await fetch(`${API_BASE}/api/attempts/${attemptId}/test-results`);
+
+  if (!response.ok) {
+    throw new Error('Failed to fetch test results');
   }
 
   return response.json();
