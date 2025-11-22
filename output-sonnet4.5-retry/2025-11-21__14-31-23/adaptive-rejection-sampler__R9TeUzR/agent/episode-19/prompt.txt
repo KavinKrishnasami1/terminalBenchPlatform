@@ -1,0 +1,43 @@
+Current Terminal Screen:
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+> hist(samples, breaks=30, main="ARS: Exponential(1)")
+> ```
+>
+> ### Example 3: Gamma Distribution
+> ```R
+> source("ars.R")
+> log_dgamma <- function(x) ifelse(x <= 0, -Inf, 2*log(x) - x)
+> samples <- ars(1000, Vectorize(log_dgamma), c(0, Inf))
+> hist(samples, breaks=30, main="ARS: Gamma(3,1)")
+> ```
+>
+> ## Algorithm Overview
+>
+> The ARS algorithm works by:
+>
+> 1. Constructing piecewise linear upper and lower envelopes of the log-density
+> 2. Sampling from the exponentiated upper envelope (piecewise exponential)
+> 3. Using squeezing and rejection tests to accept/reject samples
+> 4. Adaptively refining envelopes by adding points where rejections occur
+>
+> Key advantages:
+> - Efficient for log-concave densities
+> - Adaptive refinement improves acceptance rate over time
+> - Works with unnormalized densities
+> - Suitable for various distributions
+>
+> ## Requirements Met
+>
+> ✓ Primary function `ars()` implements adaptive rejection sampling
+> ✓ Input validation (n, f, support, x_init)
+> ✓ Log-concavity checking during initialization and sampling
+> ✓ Modular code with discrete functions for specific tasks
+> ✓ Comprehensive test suite with known distributions
+> ✓ Test output format: "TEST_NAME: PASS" or "TEST_NAME: FAIL"
+> ✓ Sample files generated: normal_samples.txt, exponential_samples.txt
+> ✓ Clear error messages for invalid inputs
+> ✓ Samples follow target distribution (validated via statistical tests)
+>
+> EOF
+root@8dbe5d027daa:/app#

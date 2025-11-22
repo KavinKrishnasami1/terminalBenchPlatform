@@ -1,0 +1,10 @@
+{
+  "analysis": "Perfect! The normal samples look valid with values distributed around 0. Let me check the exponential samples as well.",
+  "plan": "Display the first few lines of the exponential samples file to verify they are valid positive values.",
+  "commands": [
+    {
+      "keystrokes": "head -20 /app/exponential_samples.txt\n",
+      "duration": 0.1
+    }
+  ]
+}

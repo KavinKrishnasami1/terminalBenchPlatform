@@ -1,0 +1,344 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# cat > /app/ars.R << 'EOF'
+> # Adaptive Rejection Sampler (ARS)
+> # Implementation based on Gilks & Wild (1992)
+> # Author: AI Assistant
+> # Date: 2024
+>
+> ################################################################################
+> # MAIN ARS FUNCTION
+> ################################################################################
+>
+> #' Adaptive Rejection Sampler
+> #'
+> #' @param n Number of samples to generate
+> #' @param f Function that computes the (possibly unnormalized) log-density
+> #' @param support A vector of length 2 specifying the support [lower, upper]
+> #' @param x_init Initial abscissae points for envelope construction
+> #' @return Vector of n samples from the target distribution
+> ars <- function(n, f, support = c(-Inf, Inf), x_init = NULL) {
+>
+>   # Input validation
+>   validate_inputs(n, f, support, x_init)
+>
+>   # Initialize abscissae if not provided
+>   if (is.null(x_init)) {
+>     x_init <- initialize_abscissae(support)
+>   }
+>
+>   # Evaluate log-density and derivatives at initial points
+>   k <- length(x_init)
+ DE>   h <- sapply(x_init, f)
+>   hprime <- compute_derivatives(f, x_init)
+>
+>   # Check log-concavity at initial points
+_de>   if (!check_log_concavity(x_init, h, hprime)) {
+>     stop("Function does not appear to be log-concave at initial points")
+>   }
+>
+single <- function>   # Initialize sample storage
+>   samples <- numeric(n)
+>   n_sampled <- 0
+>
+>   # Sampling loop
+>   while (n_sampled < n) {
+>     # Update envelope
+>     envelope <- construct_envelope(x_init, h, hprime, support)
+>
+>     # Sample from envelope
+>     x_star <- sample_from_envelope(envelope)
+>
+>     # Evaluate at sampled point
+>     h_star <- f(x_star)
+{
+  >     hprime_star <- compute_derivative_single(f, x_star)
+>
+>     # Squeezing and rejection test
+>     u <- runif(1)
+is non-increasing
+>
+>     # Compute upper envelope at x_star
+>     u_x <- eval_upper_envelope(x_star, x_init, h, hprime, support)
+>
+>     # Compute lower envelope (squeezing function) at x_star
+>     l_x <- eval_lower_envelope(x_star, x_init, h)
+N>
+>     # Squeezing test
+##>     if (log(u) <= l_x - u_x) {
+##>       # Accept without evaluating f
+>       n_sampled <- n_sampled + 1
+>       samples[n_sampled] <- x_star
+>     } else if (log(u) <= h_star - u_x) {
+>       # Rejection test - accept
+<>       n_sampled <- n_sampled + 1
+por>       samples[n_sampled] <- x_star
+>
+tersect>       # Update abscissae
+>       x_init <- sort(c(x_init, x_star))
+>       h <- c(h, h_star)
+>       hprime <- c(hprime, hprime_star)
+(hp>
+>       # Reorder based on sorted x_init
+>       ord <- order(c(x_init[-length(x_init)], x_star))
+>       h <- h[ord]
+>       hprime <- hprime[ord]
+>
+>       # Check log-concavity
+>       if (!check_log_concavity(x_init, h, hprime)) {
+>         stop("Function is not log-concave - detected during sampling")
+>       }
+>     } else {
+>       # Reject but update abscissae
+>       x_init <- sort(c(x_init, x_star))
+>       h <- c(h, h_star)
+>       hprime <- c(hprime, hprime_star)
+>
+>       # Reorder
+>       ord <- order(c(x_init[-length(x_init)], x_star))
+>       h <- h[ord]
+>       hprime <- hprime[ord]
+>
+>       # Check log-concavity
+>       if (!check_log_concavity(x_init, h, hprime)) {
+>         stop("Function is not log-concave - detected during sampling")
+>       }
+>     }
+>   }
+>
+>   return(samples)
+> }
+>
+> ################################################################################
+> # INPUT VALIDATION
+> ################################################################################
+>
+> validate_inputs <- function(n, f, support, x_init) {
+>   # Check n
+>   if (!is.numeric(n) || length(n) != 1 || n <= 0 || n != floor(n)) {
+>     stop("n must be a positive integer")
+>   }
+>
+>   # Check f
+>   if (!is.function(f)) {
+>     stop("f must be a function")
+>   }
+>
+>   # Check support
+>   if (!is.numeric(support) || length(support) != 2) {
+>     stop("support must be a numeric vector of length 2")
+>   }
+#>
+#>   if (support[1] >= support[2]) {
+ <>     stop("support[1] must be less than support[2]")
+>   }
+>
+>   # Check x_init if provided
+ >   if (!is.null(x_init)) {
+>     if (!is.numeric(x_init) || length(x_init) < 2) {
+>       stop("x_init must be a numeric vector with at least 2 elements")
+>     }
+>
+>     if (any(x_init <= support[1]) || any(x_init >= support[2])) {
+>       stop("All x_init values must be within the support")
+>     }
+>   }
+> }
+>
+> ################################################################################
+> # INITIALIZATION
+> ################################################################################
+>
+> initialize_abscissae <- function(support) {
+>   # Create initial abscissae based on support
+>   if (is.finite(support[1]) && is.finite(support[2])) {
+>     # Bounded support
+>     range <- support[2] - support[1]
+>     return(c(support[1] + 0.25 * range,
+>              support[1] + 0.5 * range,
+>              support[1] + 0.75 * range))
+prime[i]) < 1e-10) {
+[... output limited to 10000 bytes; 70 interior bytes omitted ...]
+og_dnorm, support = c(-Inf, Inf), x_init = c(-1, 0, 1))
+>
+>   # Save samples
+>   write.table(samples, "/app/normal_samples.txt", row.names = FALSE, col.names = FALSE)
+>
+>   # Compare to true distribution
+>   sample_mean <- mean(samples)
+>   sample_sd <- sd(samples)
+>
+>   # Expected: mean = 0, sd = 1
+>   mean_pass <- abs(sample_mean - 0) < 0.05
+>   sd_pass <- abs(sample_sd - 1) < 0.05
+>
+>   cat(sprintf("  Sample mean: %.4f (expected: 0.0000)\n", sample_mean))
+>   cat(sprintf("  Sample SD: %.4f (expected: 1.0000)\n", sample_sd))
+>
+>   if (mean_pass && sd_pass) {
+>     cat("  TEST_NORMAL: PASS\n\n")
+ >   } else {
+== 0) {
+  t>     cat("  TEST_NORMAL: FAIL\n\n")
+>   }
+> }
+>
+> test_exponential <- function() {
+>   cat("Test 2: Exponential Distribution (rate=1)\n")
+>
+>   # Define log-density
+>   log_dexp <- function(x) {
+>     if (x < 0) return(-Inf)
+>     -x
+>   }
+>
+>   # Generate samples
+>   set.seed(456)
+>   n <- 10000
+>   samples <- ars(n, Vectorize(log_dexp), support = c(0, Inf), x_init = c(0.5, 1, 2))
+>
+>   # Save samples
+>   write.table(samples, "/app/exponential_samples.txt", row.names = FALSE, col.names = FALSE)
+>
+>   # Compare to true distribution
+>   sample_mean <- mean(samples)
+>   sample_sd <- sd(samples)
+>
+>   # Expected: mean = 1, sd = 1
+>   mean_pass <- abs(sample_mean - 1) < 0.05
+>   sd_pass <- abs(sample_sd - 1) < 0.05
+>
+>   cat(sprintf("  Sample mean: %.4f (expected: 1.0000)\n", sample_mean))
+>   cat(sprintf("  Sample SD: %.4f (expected: 1.0000)\n", sample_sd))
+>
+>   if (mean_pass && sd_pass) {
+>     cat("  TEST_EXPONENTIAL: PASS\n\n")
+>   } else {
+>     cat("  TEST_EXPONENTIAL: FAIL\n\n")
+>   }
+> }
+>
+> test_beta <- function() {
+>   cat("Test 3: Beta Distribution (a=2, b=5)\n")
+>
+>   # Define log-density (unnormalized)
+>   log_dbeta <- function(x) {
+>     if (x <= 0 || x >= 1) return(-Inf)
+>     (2-1) * log(x) + (5-1) * log(1-x)
+>   }
+>
+>   # Generate samples
+>   set.seed(789)
+>   n <- 10000
+>   samples <- ars(n, Vectorize(log_dbeta), support = c(0, 1), x_init = c(0.2, 0.4, 0.6))
+>
+>   # Compare to true distribution
+>   sample_mean <- mean(samples)
+>
+>   # Expected: mean = a/(a+b) = 2/7 ≈ 0.286
+>   expected_mean <- 2/7
+>   mean_pass <- abs(sample_mean - expected_mean) < 0.02
+>
+>   cat(sprintf("  Sample mean: %.4f (expected: %.4f)\n", sample_mean, expected_mean))
+>
+>   if (mean_pass) {
+>     cat("  TEST_BETA: PASS\n\n")
+>   } else {
+>     cat("  TEST_BETA: FAIL\n\n")
+>   }
+> }
+>
+> test_gamma <- function() {
+>   cat("Test 4: Gamma Distribution (shape=3, rate=1)\n")
+>
+>   # Define log-density (unnormalized)
+>   log_dgamma <- function(x) {
+>     if (x <= 0) return(-Inf)
+>     (3-1) * log(x) - x
+>   }
+>
+>   # Generate samples
+>   set.seed(101)
+>   n <- 10000
+>   samples <- ars(n, Vectorize(log_dgamma), support = c(0, Inf), x_init = c(1, 2, 4))
+>
+>   # Compare to true distribution
+>   sample_mean <- mean(samples)
+>
+>   # Expected: mean = shape/rate = 3/1 = 3
+>   expected_mean <- 3
+>   mean_pass <- abs(sample_mean - expected_mean) < 0.1
+>
+>   cat(sprintf("  Sample mean: %.4f (expected: %.4f)\n", sample_mean, expected_mean))
+>
+>   if (mean_pass) {
+>     cat("  TEST_GAMMA: PASS\n\n")
+>   } else {
+>     cat("  TEST_GAMMA: FAIL\n\n")
+>   }
+> }
+>
+> test_input_validation <- function() {
+>   cat("Test 5: Input Validation\n")
+>
+>   all_pass <- TRUE
+>
+>   # Test negative n
+>   tryCatch({
+>     ars(-5, function(x) -x^2, c(-Inf, Inf))
+>     cat("  Negative n: FAIL (should have thrown error)\n")
+>     all_pass <- FALSE
+>   }, error = function(e) {
+>     cat("  Negative n: PASS (correctly rejected)\n")
+>   })
+>
+>   # Test non-integer n
+>   tryCatch({
+>     ars(5.5, function(x) -x^2, c(-Inf, Inf))
+>     cat("  Non-integer n: FAIL (should have thrown error)\n")
+>     all_pass <- FALSE
+>   }, error = function(e) {
+>     cat("  Non-integer n: PASS (correctly rejected)\n")
+>   })
+>
+>   # Test invalid support
+>   tryCatch({
+>     ars(10, function(x) -x^2, c(5, 2))
+>     cat("  Invalid support: FAIL (should have thrown error)\n")
+>     all_pass <- FALSE
+>   }, error = function(e) {
+>     cat("  Invalid support: PASS (correctly rejected)\n")
+>   })
+>
+>   if (all_pass) {
+>     cat("  TEST_INPUT_VALIDATION: PASS\n\n")
+>   } else {
+>     cat("  TEST_INPUT_VALIDATION: FAIL\n\n")
+>   }
+> }
+>
+> test_non_log_concave <- function() {
+>   cat("Test 6: Non-log-concave Detection\n")
+>
+>   # Define a non-log-concave function (mixture of normals)
+>   log_mixture <- function(x) {
+>     log(0.5 * dnorm(x, -2, 0.5) + 0.5 * dnorm(x, 2, 0.5))
+>   }
+>
+>   # This should fail
+>   tryCatch({
+>     samples <- ars(100, log_mixture, c(-Inf, Inf), x_init = c(-2, 0, 2))
+>     cat("  Non-log-concave detection: FAIL (should have thrown error)\n")
+>     cat("  TEST_NON_LOG_CONCAVE: FAIL\n\n")
+>   }, error = function(e) {
+>     cat("  Non-log-concave detection: PASS (correctly detected)\n")
+>     cat("  TEST_NON_LOG_CONCAVE: PASS\n\n")
+>   })
+> }
+>
+> # Run tests if sourced directly
+> if (sys.nframe() == 0) {
+>   test()
+> }
+> EOF
+root@8dbe5d027daa:/app#

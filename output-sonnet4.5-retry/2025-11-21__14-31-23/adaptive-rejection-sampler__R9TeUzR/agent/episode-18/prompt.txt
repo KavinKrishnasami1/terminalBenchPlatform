@@ -1,0 +1,35 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# cat > /app/verify_ars.R << 'EOF'
+> # Verification script for ARS implementation
+> source("/app/ars.R")
+>
+> cat("\n=== VERIFICATION: ARS Function Usage ===\n\n")
+>
+> # Test 1: Sample from standard normal
+> cat("Generating 1000 samples from standard normal...\n")
+> log_norm <- function(x) -0.5 * x^2
+> samples_norm <- ars(1000, log_norm, c(-Inf, Inf), c(-1, 0, 1))
+> cat(sprintf("  Mean: %.4f, SD: %.4f\n", mean(samples_norm), sd(samples_norm)))
+>
+> # Test 2: Sample from exponential
+> cat("\nGenerating 1000 samples from exponential(1)...\n")
+> log_exp <- function(x) ifelse(x < 0, -Inf, -x)
+> samples_exp <- ars(1000, Vectorize(log_exp), c(0, Inf), c(0.5, 1, 2))
+> cat(sprintf("  Mean: %.4f, SD: %.4f\n", mean(samples_exp), sd(samples_exp)))
+>
+> cat("\n=== VERIFICATION COMPLETE ===\n\n")
+> EOF
+root@8dbe5d027daa:/app# Rscript /app/verify_ars.R
+
+=== VERIFICATION: ARS Function Usage ===
+
+Generating 1000 samples from standard normal...
+  Mean: 0.0412, SD: 0.9650
+
+Generating 1000 samples from exponential(1)...
+  Mean: 1.0523, SD: 1.0643
+
+=== VERIFICATION COMPLETE ===
+
+root@8dbe5d027daa:/app#

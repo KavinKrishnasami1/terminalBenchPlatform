@@ -1,0 +1,5 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# wc -l /app/ars.R
+501 /app/ars.R
+root@8dbe5d027daa:/app#

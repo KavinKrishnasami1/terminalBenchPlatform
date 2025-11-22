@@ -1,0 +1,43 @@
+Current Terminal Screen:
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+>   tryCatch({
+>     ars(10, function(x) -x^2, c(5, 2))
+>     cat("  Invalid support: FAIL (should have thrown error)\n")
+>     all_pass <- FALSE
+>   }, error = function(e) {
+>     cat("  Invalid support: PASS (correctly rejected)\n")
+>   })
+>
+>   if (all_pass) {
+>     cat("  TEST_INPUT_VALIDATION: PASS\n\n")
+>   } else {
+>     cat("  TEST_INPUT_VALIDATION: FAIL\n\n")
+>   }
+> }
+>
+> test_non_log_concave <- function() {
+>   cat("Test 6: Non-log-concave Detection\n")
+>
+>   # Use a clearly non-log-concave function
+>   # Mixture with points that will reveal non-log-concavity
+>   log_mixture <- function(x) {
+>     log(0.5 * dnorm(x, -2, 0.5) + 0.5 * dnorm(x, 2, 0.5))
+>   }
+>
+>   tryCatch({
+>     # Use initial points that span the valley between modes
+>     samples <- ars(100, log_mixture, c(-Inf, Inf), x_init = c(-1.5, 0, 1.5))
+>     cat("  Non-log-concave detection: FAIL (should have thrown error)\n")
+>     cat("  TEST_NON_LOG_CONCAVE: FAIL\n\n")
+>   }, error = function(e) {
+>     cat("  Non-log-concave detection: PASS (correctly detected)\n")
+>     cat("  TEST_NON_LOG_CONCAVE: PASS\n\n")
+>   })
+> }
+>
+> if (sys.nframe() == 0) {
+>   test()
+> }
+> EOF
+root@8dbe5d027daa:/app#

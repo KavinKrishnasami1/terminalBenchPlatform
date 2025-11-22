@@ -1,0 +1,12 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# Rscript /app/ars.R
+
+=== ADAPTIVE REJECTION SAMPLER TESTS ===
+
+Test 1: Standard Normal Distribution
+Error in if (hprime[i + 1] > hprime[i] + 1e-04) { :
+  missing value where TRUE/FALSE needed
+Calls: test -> test_normal -> ars -> check_log_concavity
+Execution halted
+root@8dbe5d027daa:/app#

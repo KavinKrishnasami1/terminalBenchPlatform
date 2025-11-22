@@ -1,0 +1,8 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# Rscript -e "normal <- read.table('/app/normal_samples.txt'); cat('Normal samples: n=', nrow(normal), ', mean=', round(mean(normal[,1]),
+4), ', sd=', round(sd(normal[,1]), 4), '\n'); exp_samples <- read.table('/app/exponential_samples.txt'); cat('Exponential samples: n=', nrow(exp_samples), ', me
+an=', round(mean(exp_samples[,1]), 4), ', sd=', round(sd(exp_samples[,1]), 4), '\n')"
+Normal samples: n= 10000 , mean= -0.0119 , sd= 0.9937
+Exponential samples: n= 10000 , mean= 1.0153 , sd= 1.0187
+root@8dbe5d027daa:/app#

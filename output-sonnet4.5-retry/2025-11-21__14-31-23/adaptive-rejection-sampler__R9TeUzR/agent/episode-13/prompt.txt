@@ -1,0 +1,38 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# Rscript /app/ars.R
+
+=== ADAPTIVE REJECTION SAMPLER TESTS ===
+
+Test 1: Standard Normal Distribution
+  Sample mean: -0.0119 (expected: 0.0000)
+  Sample SD: 0.9937 (expected: 1.0000)
+  TEST_NORMAL: PASS
+
+Test 2: Exponential Distribution (rate=1)
+  Sample mean: 1.0153 (expected: 1.0000)
+  Sample SD: 1.0187 (expected: 1.0000)
+  TEST_EXPONENTIAL: PASS
+
+Test 3: Beta Distribution (a=2, b=5)
+  Sample mean: 0.2851 (expected: 0.2857)
+  TEST_BETA: PASS
+
+Test 4: Gamma Distribution (shape=3, rate=1)
+  Sample mean: 3.0223 (expected: 3.0000)
+  TEST_GAMMA: PASS
+
+Test 5: Input Validation
+  Negative n: PASS (correctly rejected)
+  Non-integer n: PASS (correctly rejected)
+  Invalid support: PASS (correctly rejected)
+  TEST_INPUT_VALIDATION: PASS
+
+Test 6: Non-log-concave Detection
+  Non-log-concave detection: PASS (correctly detected)
+  TEST_NON_LOG_CONCAVE: PASS
+
+
+=== ALL TESTS COMPLETED ===
+
+root@8dbe5d027daa:/app#

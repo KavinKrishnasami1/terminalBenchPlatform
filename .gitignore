@@ -1,0 +1,54 @@
+# Environment variables
+.env
+.env.local
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+harbor-venv/
+*.egg-info/
+.pytest_cache/
+
+# Backend
+backend/tbench.db
+backend/uploads/
+backend/harbor_outputs/
+
+# Markdown files (except READMEs)
+*.md
+!README.md
+!**/README.md
+!FRONTEND_README.md
+
+# Output directories (keep only output-sonnet4.5-retry)
+output/
+output-claude/
+output-gpt5/
+output-gpt5.1/
+output-gpt5.1-retry/
+output-sonnet4.5/
+
+# Node.js / Frontend
+node_modules/
+.next/
+dist/
+build/
+*.log
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Terminal-Bench samples
+terminal-bench-samples/

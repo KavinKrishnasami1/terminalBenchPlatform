@@ -1,0 +1,12 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# Rscript /app/ars.R
+
+=== ADAPTIVE REJECTION SAMPLER TESTS ===
+
+Test 1: Standard Normal Distribution
+Error in ars(n, log_dnorm, support = c(-Inf, Inf), x_init = c(-1, 0, 1)) :
+  Function is not log-concave - detected during sampling
+Calls: test -> test_normal -> ars
+Execution halted
+root@8dbe5d027daa:/app#

@@ -1,0 +1,10 @@
+{
+  "analysis": "Great! Both sample files have been created. Let me check the contents to verify they contain valid numerical samples.",
+  "plan": "Display the first few lines of each sample file to confirm they contain valid numerical data.",
+  "commands": [
+    {
+      "keystrokes": "head -20 /app/normal_samples.txt\n",
+      "duration": 0.1
+    }
+  ]
+}

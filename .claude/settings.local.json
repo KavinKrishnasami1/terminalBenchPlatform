@@ -1,0 +1,27 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(/Users/kavin.krishnasami/Projects/terminalBenchPlatform/venv/bin/pip3 uninstall:*)",
+      "Bash(/Users/kavin.krishnasami/Projects/terminalBenchPlatform/venv/bin/pip3 install:*)",
+      "Bash(/Users/kavin.krishnasami/Projects/terminalBenchPlatform/venv/bin/python3:*)",
+      "Bash(/Users/kavin.krishnasami/Projects/terminalBenchPlatform/venv/bin/pip3 list:*)",
+      "Bash(./harbor-venv/bin/pip install:*)",
+      "Bash(./harbor-venv/bin/harbor:*)",
+      "Bash(./venv/bin/pip list:*)",
+      "Bash(./venv/bin/pip:*)",
+      "Bash(export OPENROUTER_API_KEY:*)",
+      "Bash(uvicorn:*)",
+      "Bash(docker ps:*)",
+      "Bash(npx create-next-app:*)",
+      "Bash(npx create-next-app@latest frontend --typescript --tailwind --app --no-src-dir --import-alias \"@/*\" --eslint --use-npm)",
+      "Bash(npx shadcn@latest init -y)",
+      "Bash(npx shadcn@latest init:*)",
+      "Bash(npx shadcn@latest add:*)",
+      "Bash(curl:*)",
+      "Bash(lsof:*)",
+      "Bash(sqlite3:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

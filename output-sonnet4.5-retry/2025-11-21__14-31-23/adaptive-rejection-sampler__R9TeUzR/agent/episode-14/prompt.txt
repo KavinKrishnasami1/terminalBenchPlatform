@@ -1,0 +1,6 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# ls -la /app/*.txt
+-rw-r--r-- 1 root root 176170 Nov 21 22:39 /app/exponential_samples.txt
+-rw-r--r-- 1 root root 181776 Nov 21 22:39 /app/normal_samples.txt
+root@8dbe5d027daa:/app#

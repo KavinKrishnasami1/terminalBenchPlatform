@@ -1,0 +1,10 @@
+New Terminal Output:
+
+root@8dbe5d027daa:/app# ls -lh /app/
+total 384K
+-rw-r--r-- 1 root root 5.0K Nov 21 22:40 README.md
+-rw-r--r-- 1 root root  14K Nov 21 22:39 ars.R
+-rw-r--r-- 1 root root 173K Nov 21 22:39 exponential_samples.txt
+-rw-r--r-- 1 root root 178K Nov 21 22:39 normal_samples.txt
+-rw-r--r-- 1 root root  725 Nov 21 22:40 verify_ars.R
+root@8dbe5d027daa:/app#

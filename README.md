@@ -47,10 +47,10 @@ cd backend
 python main.py
 ```
 
-The FastAPI server will start at `http://localhost:8000`
+The FastAPI server will start at `http://localhost:8001`
 
 **API Documentation:**
-Visit `http://localhost:8000/docs` for interactive Swagger UI documentation
+Visit `http://localhost:8001/docs` for interactive Swagger UI documentation
 
 ## API Endpoints
 
@@ -115,20 +115,20 @@ Response: List of episodes for an attempt
 
 ## Testing the Backend
 
-You can test the backend using curl or the Swagger UI at `http://localhost:8000/docs`:
+You can test the backend using curl or the Swagger UI at `http://localhost:8001/docs`:
 
 ```bash
 # Upload a task
-curl -X POST "http://localhost:8000/api/tasks" \
+curl -X POST "http://localhost:8001/api/tasks" \
   -F "file=@path/to/your/task.zip"
 
 # Create a run (replace {task_id} with actual ID)
-curl -X POST "http://localhost:8000/api/tasks/1/runs" \
+curl -X POST "http://localhost:8001/api/tasks/1/runs" \
   -H "Content-Type: application/json" \
   -d '{"model": "openrouter/anthropic/claude-sonnet-4.5", "n_attempts": 10}'
 
 # Check run status (replace {run_id} with actual ID)
-curl "http://localhost:8000/api/runs/1"
+curl "http://localhost:8001/api/runs/1"
 ```
 
 ## Architecture

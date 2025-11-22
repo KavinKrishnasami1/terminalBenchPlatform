@@ -1,0 +1,116 @@
+{
+    "id": "5c9a9d33-91fd-44e6-966b-d8138666b0b9",
+    "task_name": "adaptive-rejection-sampler",
+    "trial_name": "adaptive-rejection-sampler__R9TeUzR",
+    "trial_uri": "file:///Users/kavin.krishnasami/Projects/terminalBenchPlatform/output-sonnet4.5-retry/2025-11-21__14-31-23/adaptive-rejection-sampler__R9TeUzR",
+    "task_id": {
+        "path": "terminal-bench-samples/temp/adaptive-rejection-sampler"
+    },
+    "source": null,
+    "task_checksum": "4fde6e809c475b000ae3ea4135f906ffe4775bccae7dafd0b123f4ecc9fcf697",
+    "config": {
+        "task": {
+            "path": "terminal-bench-samples/temp/adaptive-rejection-sampler",
+            "git_url": null,
+            "git_commit_id": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "adaptive-rejection-sampler__R9TeUzR",
+        "trials_dir": "output-sonnet4.5-retry/2025-11-21__14-31-23",
+        "timeout_multiplier": 1.0,
+        "agent": {
+            "name": "terminus-2",
+            "import_path": null,
+            "model_name": "openrouter/anthropic/claude-sonnet-4.5",
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {}
+        },
+        "environment": {
+            "type": "docker",
+            "force_build": false,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "job_id": "0d07762e-1b71-49db-bb59-3a5655aa156d"
+    },
+    "agent_info": {
+        "name": "terminus-2",
+        "version": "2.0.0",
+        "model_info": {
+            "name": "anthropic/claude-sonnet-4.5",
+            "provider": "openrouter"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 859051,
+        "n_cache_tokens": 790408,
+        "n_output_tokens": 29156,
+        "cost_usd": 0.9318174,
+        "rollout_details": [],
+        "metadata": {
+            "n_episodes": 25,
+            "api_request_times_msec": [
+                11883.801698684692,
+                3251.269817352295,
+                2525.42781829834,
+                4086.6148471832275,
+                3451.7321586608887,
+                72070.29914855957,
+                5746.373891830444,
+                62538.76209259033,
+                4274.0960121154785,
+                64729.597330093384,
+                3909.559965133667,
+                67521.83389663696,
+                5354.91681098938,
+                4017.1148777008057,
+                3020.5140113830566,
+                3023.0610370635986,
+                3901.4952182769775,
+                9963.626861572266,
+                29972.286224365234,
+                3885.993003845215,
+                3609.063148498535,
+                7122.315168380737,
+                19218.389987945557,
+                5211.055755615234,
+                7996.793031692505
+            ]
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 0.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2025-11-21T14:31:23.684419",
+    "finished_at": "2025-11-21T14:42:27.995520",
+    "environment_setup": {
+        "started_at": "2025-11-21T14:31:23.685045",
+        "finished_at": "2025-11-21T14:31:24.057915"
+    },
+    "agent_setup": {
+        "started_at": "2025-11-21T14:31:24.057955",
+        "finished_at": "2025-11-21T14:32:04.266100"
+    },
+    "agent_execution": {
+        "started_at": "2025-11-21T14:32:04.266157",
+        "finished_at": "2025-11-21T14:41:55.784999"
+    },
+    "verifier": {
+        "started_at": "2025-11-21T14:41:55.785142",
+        "finished_at": "2025-11-21T14:42:17.149242"
+    }
+}
