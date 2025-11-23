@@ -1,0 +1,48 @@
+New Terminal Output:
+
+root@dbb1e07c5a3e:/app# R --vanilla --quiet << 'RSCRIPT'
+> source('/app/ars.R')
+> test()
+> q()
+> RSCRIPT
+> source('/app/ars.R')
+> test()
+
+=== ADAPTIVE REJECTION SAMPLING TESTS ===
+
+Test 1: Standard Normal Distribution
+  Sample mean: -0.0022 (expected: 0.0000)
+  Sample SD: 0.8360 (expected: 1.0000)
+  TEST 1: FAIL
+
+Test 2: Exponential Distribution (rate = 1)
+  Sample mean: 0.8072 (expected: 1.0000)
+  Sample SD: 0.6612 (expected: 1.0000)
+  TEST 2: FAIL
+
+Test 3: Beta Distribution (a=2, b=2)
+  Sample mean: 0.5019 (expected: 0.5000)
+  Sample SD: 0.2215 (expected: 0.2236)
+  TEST 3: PASS
+
+Test 4: Input Validation - Negative n
+  TEST 4: PASS
+
+Test 5: Log-concavity Check - Non-log-concave function
+  TEST 5: FAIL
+
+Test 6: Gamma Distribution (shape=2, rate=1)
+  Sample mean: 1.6206 (expected: 2.0000)
+  Sample SD: 0.9058 (expected: 1.4142)
+  TEST 6: FAIL
+
+
+=== TEST SUMMARY ===
+SOME TESTS FAILED
+
+Generating sample output files...
+  Written: /app/normal_samples.txt
+  Written: /app/exponential_samples.txt
+
+> q()
+root@dbb1e07c5a3e:/app#

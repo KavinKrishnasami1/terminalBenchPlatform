@@ -1,0 +1,43 @@
+Current Terminal Screen:
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+>
+>   invisible(all_passed)
+> }
+> EOF
+root@dbb1e07c5a3e:/app# ls -lh /app/ars.R
+-rw-r--r-- 1 root root 12K Nov 23 00:09 /app/ars.R
+root@dbb1e07c5a3e:/app# wc -l /app/ars.R
+445 /app/ars.R
+root@dbb1e07c5a3e:/app# head -30 /app/ars.R
+# Adaptive Rejection Sampling (ARS) Implementation
+# Based on Gilks & Wild (1992)
+# Author: Implementation for statistical computing
+
+################################################################################
+# MAIN ARS FUNCTION
+################################################################################
+
+ars <- function(n, f, x_init = NULL, xlim = c(-Inf, Inf),
+                vectorized = TRUE, ...) {
+
+  # Input validation
+  if (!is.numeric(n) || length(n) != 1 || n <= 0 || n != floor(n)) {
+    stop("n must be a positive integer")
+  }
+
+  if (!is.function(f)) {
+    stop("f must be a function")
+  }
+
+  if (length(xlim) != 2 || !is.numeric(xlim)) {
+    stop("xlim must be a numeric vector of length 2")
+  }
+
+  if (xlim[1] >= xlim[2]) {
+    stop("xlim[1] must be less than xlim[2]")
+  }
+
+  # Initialize the abscissae (starting points)
+  if (is.null(x_init)) {
+root@dbb1e07c5a3e:/app#

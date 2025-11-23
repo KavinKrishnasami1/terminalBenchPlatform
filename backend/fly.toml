@@ -20,6 +20,12 @@ primary_region = 'sjc'
   source = 'tbench_data'
   destination = '/data'
   initial_size = '10gb'
+  processes = ['app', 'worker']
+
+# API Server process
+[processes]
+  app = "/app/start.sh"
+  worker = "/app/start-worker.sh"
 
 [http_service]
   internal_port = 8080
@@ -27,6 +33,7 @@ primary_region = 'sjc'
   auto_stop_machines = 'off'
   auto_start_machines = true
   min_machines_running = 1
+  processes = ['app']
 
   [[http_service.checks]]
     interval = '10s'
@@ -35,9 +42,17 @@ primary_region = 'sjc'
     method = 'GET'
     path = '/health'
 
+# API Server VM configuration
 [[vm]]
   size = 'shared-cpu-2x'
   memory = '4gb'
+  processes = ['app']
+
+# Celery Worker VM configuration (no HTTP service, no mounts)
+[[vm]]
+  size = 'shared-cpu-4x'
+  memory = '8gb'
+  processes = ['worker']
 
 [init]
   # Enable init system for proper process management (required for Docker daemon)

@@ -1,0 +1,118 @@
+{
+    "id": "b1028e4a-c12b-4cee-82cb-a333b8ce2ba4",
+    "task_name": "adaptive-rejection-sampler",
+    "trial_name": "adaptive-rejection-sampler__oMLoiah",
+    "trial_uri": "file:///Users/kavin.krishnasami/Projects/terminalBenchPlatform/backend/test-harbor-local/2025-11-22__16-06-06/adaptive-rejection-sampler__oMLoiah",
+    "task_id": {
+        "path": "backend/uploads/adaptive-rejection-sampler_20251121_152300/extracted/adaptive-rejection-sampler"
+    },
+    "source": null,
+    "task_checksum": "4fde6e809c475b000ae3ea4135f906ffe4775bccae7dafd0b123f4ecc9fcf697",
+    "config": {
+        "task": {
+            "path": "backend/uploads/adaptive-rejection-sampler_20251121_152300/extracted/adaptive-rejection-sampler",
+            "git_url": null,
+            "git_commit_id": null,
+            "overwrite": false,
+            "download_dir": null,
+            "source": null
+        },
+        "trial_name": "adaptive-rejection-sampler__oMLoiah",
+        "trials_dir": "backend/test-harbor-local/2025-11-22__16-06-06",
+        "timeout_multiplier": 1.0,
+        "agent": {
+            "name": "terminus-2",
+            "import_path": null,
+            "model_name": "openrouter/anthropic/claude-sonnet-4.5",
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "kwargs": {}
+        },
+        "environment": {
+            "type": "docker",
+            "force_build": false,
+            "delete": true,
+            "override_cpus": null,
+            "override_memory_mb": null,
+            "override_storage_mb": null,
+            "kwargs": {}
+        },
+        "verifier": {
+            "override_timeout_sec": null,
+            "max_timeout_sec": null,
+            "disable": false
+        },
+        "job_id": "cc8ae9e0-8e50-417d-9b49-8b40379b9441"
+    },
+    "agent_info": {
+        "name": "terminus-2",
+        "version": "2.0.0",
+        "model_info": {
+            "name": "anthropic/claude-sonnet-4.5",
+            "provider": "openrouter"
+        }
+    },
+    "agent_result": {
+        "n_input_tokens": 1071119,
+        "n_cache_tokens": 1001079,
+        "n_output_tokens": 38884,
+        "cost_usd": 1.14617295,
+        "rollout_details": [],
+        "metadata": {
+            "n_episodes": 27,
+            "api_request_times_msec": [
+                6528.666973114014,
+                3912.393093109131,
+                3902.2819995880127,
+                3620.346784591675,
+                3532.9501628875732,
+                3994.478940963745,
+                4655.436992645264,
+                68333.00995826721,
+                4667.852163314819,
+                4481.944799423218,
+                73091.30787849426,
+                5181.446075439453,
+                64776.16906166077,
+                5451.881408691406,
+                6211.026906967163,
+                67807.6651096344,
+                5388.966798782349,
+                65546.08702659607,
+                5528.1970500946045,
+                3180.546760559082,
+                65771.11601829529,
+                6293.3409214019775,
+                2499.606132507324,
+                4250.734090805054,
+                7305.349826812744,
+                14760.36286354065,
+                8012.400150299072
+            ]
+        }
+    },
+    "verifier_result": {
+        "rewards": {
+            "reward": 1.0
+        }
+    },
+    "exception_info": null,
+    "started_at": "2025-11-22T16:06:06.118841",
+    "finished_at": "2025-11-22T16:18:32.274396",
+    "environment_setup": {
+        "started_at": "2025-11-22T16:06:06.120044",
+        "finished_at": "2025-11-22T16:06:06.678061"
+    },
+    "agent_setup": {
+        "started_at": "2025-11-22T16:06:06.678107",
+        "finished_at": "2025-11-22T16:06:46.121654"
+    },
+    "agent_execution": {
+        "started_at": "2025-11-22T16:06:46.121750",
+        "finished_at": "2025-11-22T16:17:56.260197"
+    },
+    "verifier": {
+        "started_at": "2025-11-22T16:17:56.260289",
+        "finished_at": "2025-11-22T16:18:21.421960"
+    }
+}

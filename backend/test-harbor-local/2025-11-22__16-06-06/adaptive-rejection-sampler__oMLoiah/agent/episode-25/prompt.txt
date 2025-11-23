@@ -1,0 +1,33 @@
+New Terminal Output:
+
+root@dbb1e07c5a3e:/app# R --vanilla --quiet << 'RSCRIPT'
+> source('/app/ars.R')
+> # Quick verification
+> set.seed(42)
+> samples <- ars(100, dnorm)
+> cat("Generated", length(samples), "samples from standard normal\n")
+> cat("Mean:", round(mean(samples), 4), "SD:", round(sd(samples), 4), "\n")
+> cat("\nFirst 10 samples:\n")
+> print(head(samples, 10))
+> cat("\nImplementation verified successfully!\n")
+> q()
+> RSCRIPT
+> source('/app/ars.R')
+> # Quick verification
+> set.seed(42)
+> samples <- ars(100, dnorm)
+> cat("Generated", length(samples), "samples from standard normal\n")
+Generated 100 samples from standard normal
+> cat("Mean:", round(mean(samples), 4), "SD:", round(sd(samples), 4), "\n")
+Mean: 0.0763 SD: 1.0364
+> cat("\nFirst 10 samples:\n")
+
+First 10 samples:
+> print(head(samples, 10))
+ [1]  0.39468318  0.64788140  0.43538691 -0.09654463  1.52022286 -0.08439487
+ [7]  2.07597964 -0.05156910  1.29566677  2.38123056
+> cat("\nImplementation verified successfully!\n")
+
+Implementation verified successfully!
+> q()
+root@dbb1e07c5a3e:/app#

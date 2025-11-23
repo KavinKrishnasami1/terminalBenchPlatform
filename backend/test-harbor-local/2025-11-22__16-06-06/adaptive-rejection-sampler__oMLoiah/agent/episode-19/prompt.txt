@@ -1,0 +1,24 @@
+New Terminal Output:
+
+root@dbb1e07c5a3e:/app# R --vanilla --quiet << 'RSCRIPT'
+> source('/app/ars.R')
+> test()
+> q()
+> RSCRIPT
+> source('/app/ars.R')
+> test()
+
+=== ADAPTIVE REJECTION SAMPLING TESTS ===
+
+Test 1: Standard Normal Distribution
+  Sample mean: -0.0028 (expected: 0.0000)
+  Sample SD: 1.0000 (expected: 1.0000)
+  TEST 1: PASS
+
+Test 2: Exponential Distribution (rate = 1)
+  Sample mean: 1.0168 (expected: 1.0000)
+  Sample SD: 1.0281 (expected: 1.0000)
+  TEST 2: PASS
+
+Test 3: Beta Distribution (a=2, b=2)
+

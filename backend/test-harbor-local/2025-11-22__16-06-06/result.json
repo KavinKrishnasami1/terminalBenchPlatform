@@ -1,0 +1,29 @@
+{
+    "id": "cc8ae9e0-8e50-417d-9b49-8b40379b9441",
+    "started_at": "2025-11-22T16:06:06.116099",
+    "finished_at": "2025-11-22T16:18:32.278390",
+    "n_total_trials": 1,
+    "stats": {
+        "n_trials": 1,
+        "n_errors": 0,
+        "evals": {
+            "terminus-2__anthropic-claude-sonnet-4.5__adhoc": {
+                "n_trials": 1,
+                "n_errors": 0,
+                "metrics": [
+                    {
+                        "mean": 1.0
+                    }
+                ],
+                "reward_stats": {
+                    "reward": {
+                        "1.0": [
+                            "adaptive-rejection-sampler__oMLoiah"
+                        ]
+                    }
+                },
+                "exception_stats": {}
+            }
+        }
+    }
+}

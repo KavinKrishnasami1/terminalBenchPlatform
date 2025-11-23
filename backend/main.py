@@ -1,5 +1,5 @@
 """FastAPI application for Terminal-Bench platform"""
-from fastapi import FastAPI, UploadFile, File, Depends, HTTPException, BackgroundTasks
+from fastapi import FastAPI, UploadFile, File, Depends, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
@@ -17,7 +17,118 @@ load_dotenv()  # Load from current directory first
 load_dotenv(Path(__file__).parent.parent / '.env')  # Then load from project root
 
 from database import get_db, init_db, Task, Run, Attempt, Episode, TestResult
+from celery_worker import execute_harbor_task
 from harbor_runner import execute_harbor
+import threading
+
+# Check if Redis/Celery is available
+def is_redis_available():
+    """Check if Redis is available for Celery"""
+    try:
+        import redis
+        redis_url = os.getenv('REDIS_URL', 'redis://localhost:6379/0')
+        r = redis.from_url(redis_url, socket_connect_timeout=1)
+        r.ping()
+        return True
+    except Exception:
+        return False
+
+USE_CELERY = is_redis_available()
+
+def update_run_status_if_complete_local(run_id: int, db):
+    """Update run status to completed if all attempts are done (local version)"""
+    try:
+        run = db.query(Run).filter(Run.id == run_id).first()
+        if not run:
+            return
+
+        # Check if any attempts are still running
+        running_attempts = [a for a in run.attempts if a.status == 'running']
+
+        if len(running_attempts) == 0:
+            # All attempts are done (completed or failed)
+            run.status = 'completed'
+            db.commit()
+    except Exception:
+        pass
+
+def execute_attempt_locally(attempt_id: int, task_path: str, model: str, output_dir: str, openrouter_api_key: str):
+    """Execute Harbor locally (without Celery) for development"""
+    from database import SessionLocal
+    db = SessionLocal()
+
+    try:
+        # Execute Harbor
+        result = execute_harbor(
+            task_path=task_path,
+            model=model,
+            output_dir=output_dir,
+            openrouter_api_key=openrouter_api_key
+        )
+
+        # Get attempt record
+        attempt = db.query(Attempt).filter(Attempt.id == attempt_id).first()
+        if not attempt:
+            return
+
+        # Process results
+        if result['success']:
+            attempt.status = "completed"
+            attempt.reward = result['reward']
+            attempt.episode_count = len(result['episodes'])
+            attempt.output_path = result['output_path']
+            attempt.error_message = None
+            attempt.completed_at = datetime.utcnow()
+
+            # Store episodes
+            for ep_data in result['episodes']:
+                episode = Episode(
+                    attempt_id=attempt_id,
+                    episode_number=ep_data['episode_number'],
+                    analysis=ep_data['analysis'],
+                    plan=ep_data['plan'],
+                    commands=ep_data['commands'],
+                    task_complete=ep_data['task_complete']
+                )
+                db.add(episode)
+
+            # Store test results
+            for test_data in result['test_results']:
+                test_result = TestResult(
+                    attempt_id=attempt_id,
+                    test_name=test_data['test_name'],
+                    status=test_data['status'],
+                    duration_ms=test_data['duration_ms'],
+                    error_message=test_data['error_message']
+                )
+                db.add(test_result)
+
+            db.commit()
+
+            # Update run status if all attempts are done
+            update_run_status_if_complete_local(attempt.run_id, db)
+        else:
+            attempt.status = "failed"
+            attempt.reward = 0.0
+            attempt.error_message = result['error']
+            attempt.completed_at = datetime.utcnow()
+            db.commit()
+
+            # Update run status if all attempts are done
+            update_run_status_if_complete_local(attempt.run_id, db)
+
+    except Exception as e:
+        try:
+            attempt = db.query(Attempt).filter(Attempt.id == attempt_id).first()
+            if attempt:
+                attempt.status = "failed"
+                attempt.error_message = f"Worker error: {str(e)}"
+                attempt.completed_at = datetime.utcnow()
+                db.commit()
+        except Exception:
+            pass
+    finally:
+        db.close()
 
 app = FastAPI(title="Terminal-Bench Platform")
 
@@ -38,13 +149,31 @@ app.add_middleware(
 )
 
 # Create directories
-UPLOAD_DIR = Path("./uploads")
-OUTPUT_DIR = Path("./harbor_outputs")
-UPLOAD_DIR.mkdir(exist_ok=True)
-OUTPUT_DIR.mkdir(exist_ok=True)
+# Use /data volume on Fly.io (production), local dirs for development
+if Path("/data").exists():
+    # Production: Use Fly.io volume
+    UPLOAD_DIR = Path("/data/uploads")
+    OUTPUT_DIR = Path("/data/harbor_outputs")
+else:
+    # Development: Use local directories
+    UPLOAD_DIR = Path("./uploads")
+    OUTPUT_DIR = Path("./harbor_outputs")
+
+UPLOAD_DIR.mkdir(exist_ok=True, parents=True)
+OUTPUT_DIR.mkdir(exist_ok=True, parents=True)
 
 # Initialize database
 init_db()
+
+# Log execution mode
+import logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+if USE_CELERY:
+    logger.info("✓ Redis available - Using Celery for concurrent execution")
+else:
+    logger.warning("⚠ Redis unavailable - Using local threading (development mode)")
+    logger.warning("  For production deployment with concurrent execution, ensure Redis is running")
 
 # Pydantic models
 class TaskResponse(BaseModel):
@@ -194,7 +323,6 @@ def get_task_runs(task_id: int, db: Session = Depends(get_db)):
 async def create_run(
     task_id: int,
     run_data: RunCreate,
-    background_tasks: BackgroundTasks,
     db: Session = Depends(get_db)
 ):
     """Create a new run for a task"""
@@ -203,6 +331,11 @@ async def create_run(
     task = db.query(Task).filter(Task.id == task_id).first()
     if not task:
         raise HTTPException(status_code=404, detail="Task not found")
+
+    # Get OpenRouter API key
+    openrouter_key = os.getenv('OPENROUTER_API_KEY')
+    if not openrouter_key:
+        raise HTTPException(status_code=500, detail="OPENROUTER_API_KEY not configured")
 
     # Create run
     run = Run(
@@ -214,25 +347,43 @@ async def create_run(
     db.commit()
     db.refresh(run)
 
-    # Create attempt records
+    # Create attempt records and enqueue tasks
     for i in range(run_data.n_attempts):
         attempt = Attempt(
             run_id=run.id,
             attempt_number=i + 1,
-            status="queued"
+            status="running"  # Mark as running immediately when enqueued
         )
         db.add(attempt)
+        db.flush()  # Get attempt.id without committing
+
+        # Create output directory for this attempt
+        output_dir = OUTPUT_DIR / f"run_{run.id}_attempt_{i+1}"
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        if USE_CELERY:
+            # Production: Enqueue Celery task for parallel execution
+            execute_harbor_task.delay(
+                attempt_id=attempt.id,
+                task_path=task.file_path,
+                model=run_data.model,
+                output_dir=str(output_dir),
+                openrouter_api_key=openrouter_key
+            )
+        else:
+            # Development: Execute in background thread (no Redis needed)
+            thread = threading.Thread(
+                target=execute_attempt_locally,
+                args=(attempt.id, task.file_path, run_data.model, str(output_dir), openrouter_key)
+            )
+            thread.daemon = True
+            thread.start()
 
     db.commit()
 
-    # Start execution in background
-    background_tasks.add_task(
-        execute_run,
-        run.id,
-        task.file_path,
-        run_data.model,
-        run_data.n_attempts
-    )
+    # Update run status to running (tasks are now enqueued)
+    run.status = "running"
+    db.commit()
 
     return run
 
@@ -299,95 +450,25 @@ def get_test_results(attempt_id: int, db: Session = Depends(get_db)):
 
     return attempt.test_results
 
-def execute_run(run_id: int, task_path: str, model: str, n_attempts: int):
-    """Execute all attempts for a run (runs in background)"""
+@app.get("/api/attempts/{attempt_id}")
+def get_attempt_details(attempt_id: int, db: Session = Depends(get_db)):
+    """Get attempt details including error message"""
 
-    # Get database session
-    from database import SessionLocal
-    db = SessionLocal()
+    attempt = db.query(Attempt).filter(Attempt.id == attempt_id).first()
+    if not attempt:
+        raise HTTPException(status_code=404, detail="Attempt not found")
 
-    try:
-        # Update run status
-        run = db.query(Run).filter(Run.id == run_id).first()
-        run.status = "running"
-        db.commit()
-
-        # Get OpenRouter API key
-        openrouter_key = os.getenv('OPENROUTER_API_KEY')
-        if not openrouter_key:
-            raise Exception("OPENROUTER_API_KEY not found in environment")
-
-        # Execute each attempt sequentially
-        for i in range(n_attempts):
-            attempt = db.query(Attempt).filter(
-                Attempt.run_id == run_id,
-                Attempt.attempt_number == i + 1
-            ).first()
-
-            # Update attempt status
-            attempt.status = "running"
-            db.commit()
-
-            # Create output directory for this attempt
-            output_dir = OUTPUT_DIR / f"run_{run_id}_attempt_{i+1}"
-            output_dir.mkdir(parents=True, exist_ok=True)
-
-            # Execute Harbor
-            print(f"🚀 Starting Harbor for attempt {attempt.id}", flush=True)
-            result = execute_harbor(
-                task_path=task_path,
-                model=model,
-                output_dir=str(output_dir),
-                openrouter_api_key=openrouter_key
-            )
-            print(f"✅ Harbor finished for attempt {attempt.id}: success={result['success']}", flush=True)
-
-            if result['success']:
-                # Update attempt
-                attempt.status = "completed"
-                attempt.reward = result['reward']
-                attempt.episode_count = len(result['episodes'])
-                attempt.output_path = result['output_path']
-                attempt.completed_at = datetime.utcnow()
-
-                # Store episodes
-                for ep_data in result['episodes']:
-                    episode = Episode(
-                        attempt_id=attempt.id,
-                        **ep_data
-                    )
-                    db.add(episode)
-
-                # Store test results
-                for test_data in result['test_results']:
-                    test_result = TestResult(
-                        attempt_id=attempt.id,
-                        **test_data
-                    )
-                    db.add(test_result)
-
-            else:
-                # Mark attempt as failed
-                attempt.status = "failed"
-                attempt.error_message = result['error']
-                attempt.completed_at = datetime.utcnow()
-                print(f"❌ Attempt {attempt.id} failed: {result['error']}", flush=True)
-
-            db.commit()
-
-        # Mark run as completed
-        run.status = "completed"
-        run.completed_at = datetime.utcnow()
-        db.commit()
-
-    except Exception as e:
-        # Mark run as failed
-        run.status = "failed"
-        db.commit()
-        print(f"Error executing run {run_id}: {str(e)}")
-
-    finally:
-        db.close()
+    return {
+        "id": attempt.id,
+        "attempt_number": attempt.attempt_number,
+        "status": attempt.status,
+        "reward": attempt.reward,
+        "episode_count": attempt.episode_count,
+        "error_message": attempt.error_message,
+        "output_path": attempt.output_path,
+        "created_at": attempt.created_at,
+        "completed_at": attempt.completed_at
+    }
 
 if __name__ == "__main__":
     import uvicorn

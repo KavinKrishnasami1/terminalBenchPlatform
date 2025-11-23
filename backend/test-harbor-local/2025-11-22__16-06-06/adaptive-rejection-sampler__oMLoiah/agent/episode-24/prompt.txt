@@ -1,0 +1,43 @@
+Current Terminal Screen:
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+
+Test 5: Log-concavity Check - Non-log-concave function
+  TEST 5: PASS
+
+Test 6: Gamma Distribution (shape=2, rate=1)
+  Sample mean: 2.0030 (expected: 2.0000)
+  Sample SD: 1.4082 (expected: 1.4142)
+  TEST 6: PASS
+
+
+=== TEST SUMMARY ===
+ALL TESTS PASSED
+
+Generating sample output files...
+  Written: /app/normal_samples.txt
+  Written: /app/exponential_samples.txt
+
+> q()
+root@dbb1e07c5a3e:/app# ls -lh /app/
+total 52K
+-rw-r--r-- 1 root root 12K Nov 23 00:16 ars.R
+-rw-r--r-- 1 root root 18K Nov 23 00:17 exponential_samples.txt
+-rw-r--r-- 1 root root 18K Nov 23 00:17 normal_samples.txt
+root@dbb1e07c5a3e:/app# wc -l /app/*.txt /app/*.R
+ 1000 /app/exponential_samples.txt
+ 1000 /app/normal_samples.txt
+  430 /app/ars.R
+ 2430 total
+root@dbb1e07c5a3e:/app# head -10 /app/normal_samples.txt
+-0.332785874605905
+0.893626933448082
+0.380955148275391
+-0.232302845667798
+-0.531101868009684
+-1.88177730220596
+-1.22100005768129
+-0.909868369622356
+-1.07702204797935
+1.32942590104571
+root@dbb1e07c5a3e:/app#

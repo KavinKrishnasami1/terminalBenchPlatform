@@ -57,8 +57,18 @@ def execute_harbor(
         # Set environment
         env = {
             **os.environ,
-            'OPENROUTER_API_KEY': openrouter_api_key
+            'OPENROUTER_API_KEY': openrouter_api_key,
+            'DOCKER_HOST': 'unix:///var/run/docker.sock'  # Ensure Harbor can find Docker
         }
+
+        # Debug logging
+        import logging
+        logger = logging.getLogger(__name__)
+        logger.info(f"Harbor command: {' '.join(cmd)}")
+        logger.info(f"Task path: {task_path}")
+        logger.info(f"Output dir: {output_dir}")
+        logger.info(f"API key length: {len(openrouter_api_key) if openrouter_api_key else 0}")
+        logger.info(f"DOCKER_HOST: {env.get('DOCKER_HOST')}")
 
         # Execute Harbor
         result = subprocess.run(
@@ -70,9 +80,15 @@ def execute_harbor(
         )
 
         if result.returncode != 0:
+            # Capture both stdout and stderr for better debugging
+            error_details = {
+                'returncode': result.returncode,
+                'stderr': result.stderr[:5000] if result.stderr else '',  # Limit to 5000 chars
+                'stdout': result.stdout[:2000] if result.stdout else ''   # Capture some stdout too
+            }
             return {
                 'success': False,
-                'error': f"Harbor execution failed: {result.stderr}",
+                'error': f"Harbor execution failed (exit {result.returncode}):\n\nSTDERR:\n{error_details['stderr']}\n\nSTDOUT:\n{error_details['stdout']}",
                 'output_path': None,
                 'reward': 0.0,
                 'episodes': [],

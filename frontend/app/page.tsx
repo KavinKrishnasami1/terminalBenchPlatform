@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 import { UploadTask } from '@/components/upload-task';
+import { BulkRunDialog } from '@/components/BulkRunDialog';
 import { getTasks, getTaskRuns } from '@/lib/api';
 import type { Task, Run } from '@/lib/types';
 import { PlayCircle, ArrowRight, CheckCircle2, XCircle, Clock } from 'lucide-react';
@@ -82,7 +83,12 @@ export default function HomePage() {
       </div>
 
       <div>
-        <h2 className="text-2xl font-semibold mb-4">Your Tasks</h2>
+        <div className="flex items-center justify-between mb-4">
+          <h2 className="text-2xl font-semibold">Your Tasks</h2>
+          {tasks.length > 0 && (
+            <BulkRunDialog tasks={tasks} onRunsCreated={loadTasks} />
+          )}
+        </div>
         {isLoading ? (
           <p className="text-muted-foreground">Loading tasks...</p>
         ) : tasks.length === 0 ? (

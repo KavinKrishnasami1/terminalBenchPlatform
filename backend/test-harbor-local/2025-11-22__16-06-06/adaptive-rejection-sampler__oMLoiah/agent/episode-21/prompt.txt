@@ -1,0 +1,43 @@
+Current Terminal Screen:
+bash: cannot set terminal process group (-1): Inappropriate ioctl for device
+bash: no job control in this shell
+>   f_gamma <- function(x) ifelse(x >= 0, dgamma(x, shape = 2, rate = 1), 0)
+>   samples_gamma <- ars(n = 10000, f = f_gamma, x_init = c(0.5, 2, 4), xlim = c(0, Inf))
+>   mean_gamma <- mean(samples_gamma)
+>   sd_gamma <- sd(samples_gamma)
+>   expected_mean_gamma <- 2
+>   expected_sd_gamma <- sqrt(2)
+>   cat(sprintf("  Sample mean: %.4f (expected: %.4f)\n", mean_gamma, expected_mean_gamma))
+>   cat(sprintf("  Sample SD: %.4f (expected: %.4f)\n", sd_gamma, expected_sd_gamma))
+>   if (abs(mean_gamma - expected_mean_gamma) < 0.1 && abs(sd_gamma - expected_sd_gamma) < 0.1) {
+>     cat("  TEST 6: PASS\n\n")
+>   } else {
+>     cat("  TEST 6: FAIL\n\n")
+>     all_passed <- FALSE
+>   }
+>
+>   # Summary
+>   cat("\n=== TEST SUMMARY ===\n")
+>   if (all_passed) {
+>     cat("ALL TESTS PASSED\n\n")
+>   } else {
+>     cat("SOME TESTS FAILED\n\n")
+>   }
+>
+>   # Generate output files
+>   cat("Generating sample output files...\n")
+>   set.seed(999)
+>   normal_samples <- ars(n = 1000, f = dnorm, x_init = c(-2, 0, 2))
+>   write.table(normal_samples, file = "/app/normal_samples.txt",
+>               row.names = FALSE, col.names = FALSE)
+>   cat("  Written: /app/normal_samples.txt\n")
+>
+>   exponential_samples <- ars(n = 1000, f = f_exp, x_init = c(0.1, 1, 3), xlim = c(0, Inf))
+>   write.table(exponential_samples, file = "/app/exponential_samples.txt",
+>               row.names = FALSE, col.names = FALSE)
+>   cat("  Written: /app/exponential_samples.txt\n\n")
+>
+>   invisible(all_passed)
+> }
+> EOF
+root@dbb1e07c5a3e:/app#

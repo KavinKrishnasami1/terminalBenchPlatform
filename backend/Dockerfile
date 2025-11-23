@@ -34,12 +34,14 @@ ENV PATH="/app/venv/bin:$PATH"
 # Set Harbor binary path for subprocess calls
 ENV HARBOR_BIN="/app/harbor-venv/bin/harbor"
 
-# Copy and make startup script executable
+# Copy and make startup scripts executable
 COPY start.sh /app/start.sh
-RUN chmod +x /app/start.sh
+COPY start-worker.sh /app/start-worker.sh
+RUN chmod +x /app/start.sh /app/start-worker.sh
 
-# Expose port (Railway will use $PORT env var)
+# Expose port (Railway/Fly.io will use $PORT env var)
 EXPOSE 8001
 
-# Start Docker daemon and FastAPI server
+# Default command: start Docker daemon and FastAPI server
+# For worker: override with start-worker.sh
 CMD ["/app/start.sh"]

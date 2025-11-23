@@ -1,0 +1,28 @@
+New Terminal Output:
+
+Test 3: Beta Distribution (a=2, b=2)
+  Sample mean: 0.4993 (expected: 0.5000)
+  Sample SD: 0.2218 (expected: 0.2236)
+  TEST 3: PASS
+
+Test 4: Input Validation - Negative n
+  TEST 4: PASS
+
+Test 5: Log-concavity Check - Non-log-concave function
+  TEST 5: FAIL
+
+Test 6: Gamma Distribution (shape=2, rate=1)
+  Sample mean: 2.0030 (expected: 2.0000)
+  Sample SD: 1.4082 (expected: 1.4142)
+  TEST 6: PASS
+
+
+=== TEST SUMMARY ===
+SOME TESTS FAILED
+
+Generating sample output files...
+  Written: /app/normal_samples.txt
+  Written: /app/exponential_samples.txt
+
+> q()
+root@dbb1e07c5a3e:/app#

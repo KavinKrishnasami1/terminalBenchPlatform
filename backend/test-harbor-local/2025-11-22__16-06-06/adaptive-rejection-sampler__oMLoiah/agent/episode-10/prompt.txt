@@ -1,0 +1,23 @@
+New Terminal Output:
+
+root@dbb1e07c5a3e:/app# R --vanilla --quiet << 'RSCRIPT'
+> source('/app/ars.R')
+> test()
+> q()
+> RSCRIPT
+> source('/app/ars.R')
+> test()
+
+=== ADAPTIVE REJECTION SAMPLING TESTS ===
+
+Test 1: Standard Normal Distribution
+  Sample mean: 0.0007 (expected: 0.0000)
+  Sample SD: 0.9932 (expected: 1.0000)
+  TEST 1: PASS
+
+Test 2: Exponential Distribution (rate = 1)
+Error in sample.int(length(x), size, replace, prob) :
+  negative probability
+Calls: test -> ars -> sample_envelope -> sample -> sample.int
+Execution halted
+root@dbb1e07c5a3e:/app#
