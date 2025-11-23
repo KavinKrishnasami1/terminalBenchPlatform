@@ -19,6 +19,7 @@ load_dotenv(Path(__file__).parent.parent / '.env')  # Then load from project roo
 from database import get_db, init_db, Task, Run, Attempt, Episode, TestResult
 from celery_worker import execute_harbor_task
 from harbor_runner import execute_harbor
+from storage import upload_directory_to_s3, download_directory_from_s3, USE_CLOUD_STORAGE
 import threading
 
 # Check if Redis/Celery is available
@@ -264,10 +265,22 @@ async def upload_task(
     if not task_path:
         raise HTTPException(status_code=400, detail="Could not find task directory with task.toml in uploaded zip")
 
+    # Upload to S3 if cloud storage is enabled
+    s3_prefix = None
+    if USE_CLOUD_STORAGE:
+        # S3 key: tasks/{task_name}_{timestamp}/
+        s3_prefix = f"tasks/{task_name}_{timestamp}"
+        success = upload_directory_to_s3(str(task_path), s3_prefix)
+        if not success:
+            logger.warning(f"Failed to upload task to S3, falling back to local storage")
+            s3_prefix = None
+
     # Create task in database
+    # If cloud storage is enabled and upload succeeded, store S3 prefix
+    # Otherwise store local path
     task = Task(
         name=task_name,
-        file_path=str(task_path)
+        file_path=s3_prefix if s3_prefix else str(task_path)
     )
     db.add(task)
     db.commit()

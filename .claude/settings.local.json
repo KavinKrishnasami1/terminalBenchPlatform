@@ -14,7 +14,19 @@
       "Bash(flyctl ssh sftp shell:*)",
       "Bash(npx tsc:*)",
       "Bash(python main.py:*)",
-      "Bash(flyctl machine restart:*)"
+      "Bash(flyctl machine restart:*)",
+      "Bash(curl:*)",
+      "Bash(flyctl apps restart:*)",
+      "Bash(flyctl ssh console:*)",
+      "Bash(flyctl logs:*)",
+      "Bash(flyctl volumes list:*)",
+      "Bash(flyctl status:*)",
+      "Bash(flyctl deploy:*)",
+      "Bash(for:*)",
+      "Bash(do echo \"=== Check $i ===\")",
+      "Bash(done)",
+      "Bash(while true)",
+      "Bash(do clear)"
     ],
     "deny": [],
     "ask": []
