@@ -31,7 +31,7 @@ app.conf.update(
     # Worker settings
     worker_prefetch_multiplier=1,  # Only fetch 1 task at a time per worker
     worker_max_tasks_per_child=int(os.getenv('CELERY_MAX_TASKS_PER_CHILD', 50)),  # Restart worker after N tasks
-    worker_concurrency=int(os.getenv('CELERY_CONCURRENCY', 1)),  # 1 concurrent Docker task per worker (prevents Docker daemon overload)
+    worker_concurrency=int(os.getenv('CELERY_CONCURRENCY', 2)),  # 2 concurrent Docker tasks per worker
 
     # Task result expiration
     result_expires=86400,  # Results expire after 24 hours

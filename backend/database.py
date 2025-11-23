@@ -2,6 +2,7 @@
 from sqlalchemy import create_engine, Column, String, Integer, Float, Boolean, Text, ForeignKey, DateTime
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import sessionmaker, relationship
+from sqlalchemy.pool import QueuePool
 from datetime import datetime
 import os
 
@@ -11,7 +12,21 @@ DATABASE_URL = os.getenv("DATABASE_URL", "sqlite:///./tbench.db")
 # SQLite requires connect_args, PostgreSQL doesn't
 connect_args = {"check_same_thread": False} if DATABASE_URL.startswith("sqlite") else {}
 
-engine = create_engine(DATABASE_URL, connect_args=connect_args)
+# Connection pool configuration for handling 750+ concurrent attempts
+# For SQLite (development), pool settings are not applicable
+# For PostgreSQL (production), configure connection pool
+if DATABASE_URL.startswith("sqlite"):
+    engine = create_engine(DATABASE_URL, connect_args=connect_args)
+else:
+    engine = create_engine(
+        DATABASE_URL,
+        poolclass=QueuePool,
+        pool_size=50,          # Base pool size: 50 connections
+        max_overflow=100,      # Allow up to 100 additional connections (total: 150)
+        pool_pre_ping=True,    # Verify connections are alive before using
+        pool_recycle=3600,     # Recycle connections after 1 hour
+        connect_args=connect_args
+    )
 SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
 Base = declarative_base()
 
@@ -36,7 +51,7 @@ class Run(Base):
     completed_at = Column(DateTime, nullable=True)
 
     task = relationship("Task", back_populates="runs")
-    attempts = relationship("Attempt", back_populates="run", cascade="all, delete-orphan")
+    attempts = relationship("Attempt", back_populates="run", cascade="all, delete-orphan", order_by="Attempt.attempt_number")
 
 class Attempt(Base):
     __tablename__ = "attempts"

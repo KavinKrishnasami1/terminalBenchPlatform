@@ -26,7 +26,12 @@
       "Bash(do echo \"=== Check $i ===\")",
       "Bash(done)",
       "Bash(while true)",
-      "Bash(do clear)"
+      "Bash(do clear)",
+      "Bash(do echo \"=== Run #$run_id ===\")",
+      "Bash(do echo \"=== Task #$task_id ===\" curl -s \"https://tbench-platform-backend.fly.dev/api/tasks/$task_id/runs\")",
+      "Bash(do:*)",
+      "Bash(echo \"Run #$run_id:\" curl -s \"https://tbench-platform-backend.fly.dev/api/runs/$run_id\")",
+      "Bash(flyctl secrets set:*)"
     ],
     "deny": [],
     "ask": []

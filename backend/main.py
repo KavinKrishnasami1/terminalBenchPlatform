@@ -294,6 +294,36 @@ def list_tasks(db: Session = Depends(get_db)):
     tasks = db.query(Task).order_by(Task.created_at.desc()).all()
     return tasks
 
+@app.delete("/api/tasks")
+def delete_all_tasks(db: Session = Depends(get_db)):
+    """Delete all tasks (cascade deletes runs, attempts, episodes, test results)"""
+    try:
+        task_count = db.query(Task).count()
+
+        # Manually cascade delete in correct order due to foreign key constraints
+        # 1. Delete episodes and test results (children of attempts)
+        db.query(Episode).delete()
+        db.query(TestResult).delete()
+
+        # 2. Delete attempts (children of runs)
+        db.query(Attempt).delete()
+
+        # 3. Delete runs (children of tasks)
+        db.query(Run).delete()
+
+        # 4. Finally delete tasks
+        db.query(Task).delete()
+
+        db.commit()
+        return {
+            "success": True,
+            "message": f"Deleted {task_count} tasks and all related data",
+            "deleted_count": task_count
+        }
+    except Exception as e:
+        db.rollback()
+        raise HTTPException(status_code=500, detail=f"Failed to delete tasks: {str(e)}")
+
 @app.get("/api/tasks/{task_id}/runs", response_model=List[RunResponse])
 def get_task_runs(task_id: int, db: Session = Depends(get_db)):
     """Get all runs for a specific task"""
